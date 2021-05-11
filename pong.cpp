@@ -5,6 +5,9 @@
 #define WIDTH 720
 #define HEIGHT 720
 #define FONT_SIZE 32
+#define BALL_SPEED 16
+#define SPEED 9
+#define SIZE 16
 
 SDL_Renderer* renderer;
 SDL_Window* window;
@@ -13,7 +16,42 @@ SDL_Color color;
 bool running;
 int frameCount, timerFPS, lastFrame, fps;
 
-//SDL_Rect rect;
+SDL_Rect left_pad, right_pad, ball, score_board;
+float velX, velY;
+std::string score;
+int left_score;
+int right_score;
+bool turn;
+
+void serve(){
+    left_pad.y = (HEIGHT/2) - (left_pad.h/2);
+    right_pad.y = (HEIGHT/2) - (left_pad.h/2);
+    if(turn){
+        ball.x = left_pad.x + (left_pad.w * 4);
+    }else{
+        ball.x = right_pad.x - (right_pad.w * 4);
+    }
+    velX = BALL_SPEED/2;
+    velY = 0;
+    ball.y = HEIGHT/2-(SIZE/2);
+    turn = !turn;
+}
+
+void write(std::string text, int x, int y){
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    const char* t = text.c_str();
+    surface = TTF_RenderText_Solid(font, t, color);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    score_board.w = surface -> w;
+    score_board.h = surface -> h;
+    score_board.x = x - score_board.w;
+    score_board.y = y - score_board.h;
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy(renderer, texture, NULL, &score_board);
+
+
+}
 
 void update(){}
 
@@ -42,6 +80,8 @@ void render(){
         SDL_Delay((1000/60) - timerFPS);
     }
 
+    write(score, WIDTH/2+FONT_SIZE, FONT_SIZE*2);
+
     
 
 
@@ -63,6 +103,16 @@ int main(){
     color.r = 255;
     color.g = 255;
     color.b = 255;
+
+    left_score = 0;
+    right_score = 0;
+    left_pad.x = 32; left_pad.h=HEIGHT/4;
+    right_pad = left_pad;
+    right_pad.x = WIDTH - right_pad.w - 32;
+    ball.w = SIZE;
+    ball.h = SIZE;
+
+    serve();
 
     running = 1;
     static int lastTime = 0;
