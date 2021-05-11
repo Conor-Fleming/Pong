@@ -13,9 +13,25 @@ SDL_Color color;
 bool running;
 int frameCount, timerFPS, lastFrame, fps;
 
-void render();
-void input();
-void update();
+void update(){}
+
+void input(){
+    SDL_Event e;
+    const Uint8 *keystates = SDL_GetKeyboardState(NULL);
+
+}
+
+void render(){
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 255);
+    SDL_RenderClear(renderer);
+
+    frameCount++;
+    timerFPS = SDL_GetTicks() - lastFrame;
+    if(timerFPS < (1000/60)) {
+        SDL_Delay((1000/60) - timerFPS);
+    }
+}
+
 
 int main(){
     if(SDL_Init(SDL_INIT_EVERYTHING) < 0) 
@@ -26,6 +42,8 @@ int main(){
     TTF_Init();
     font = TTF_OpenFont("Peepo.ttf", FONT_SIZE);
 
+    running = 1;
+    static int lastTime = 0;
     while(running){
         lastFrame=SDL_GetTicks();
         if(lastFrame >= (lastTime+1000)){
@@ -41,20 +59,4 @@ int main(){
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-}
-
-void render(){
-    frameCount++;
-    timerFPS = SDL_GetTicks() - lastFrame;
-    if(time FPS < (1000/60)) {
-        SDL_Delay((1000/60)) - timerFPS;
-    }
-}
-
-void input(){
-
-}
-
-void update(){
-
 }
